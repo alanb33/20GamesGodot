@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8k5ikakreqep"]
+
+[ext_resource type="Texture2D" uid="uid://cax7fkgxruh5g" path="res://assets/OrangeFuzz2.png" id="1_wh2ce"]
+
+[sub_resource type="Curve" id="Curve_k18rn"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.732955, 0), -7.14108, 0.0, 0, 0]
+point_count = 2
+
+[node name="ShredderParticles" type="CPUParticles2D"]
+amount = 32
+texture = ExtResource("1_wh2ce")
+lifetime = 2.0
+speed_scale = 2.0
+explosiveness = 0.75
+spread = 19.48
+gravity = Vector2(0, 0)
+initial_velocity_min = 300.0
+initial_velocity_max = 720.0
+angular_velocity_max = 720.0
+scale_amount_max = 2.0
+scale_amount_curve = SubResource("Curve_k18rn")

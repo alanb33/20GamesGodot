@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://p8ubf5p3awve"]
+
+[ext_resource type="Script" uid="uid://bjmqi3epsx6cu" path="res://scenes/ball.gd" id="1_ja1hk"]
+[ext_resource type="Texture2D" uid="uid://c7uekd74h3c2" path="res://assets/BallOrangeDarkBorder.png" id="2_ja1hk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ja1hk"]
+size = Vector2(25, 25)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ja1hk"]
+
+[node name="Ball" type="CharacterBody2D"]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_ja1hk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+modulate = Color(0.481789, 0.481789, 0.481789, 1)
+shape = SubResource("RectangleShape2D_ja1hk")
+
+[node name="PinJoint2D" type="PinJoint2D" parent="."]
+node_a = NodePath("..")
+node_b = NodePath("../RigidBody2D")
+softness = 5.0
+angular_limit_lower = -0.785398
+angular_limit_upper = 0.785398
+motor_target_velocity = 0.0174533
+
+[node name="Pieces" type="Node2D" parent="."]
+
+[node name="BodyBase" type="Polygon2D" parent="Pieces"]
+position = Vector2(-15, -15)
+texture = ExtResource("2_ja1hk")
+polygon = PackedVector2Array(-0.478638, 31.566, -0.768311, -0.876395, 32.5431, 0.282262, 33.1224, 32.435)
+uv = PackedVector2Array(-0.478638, 31.566, -0.768311, -0.876395, 32.5431, 0.282262, 33.1224, 32.435)
+bones = ["BasePuck", PackedFloat32Array(0.5, 1, 0.5, 0.5), "BasePuck/Tail", PackedFloat32Array(0, 0, 0, 0)]
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_ja1hk")
+center_of_mass_mode = 1
+center_of_mass = Vector2(-25, 0)
+
+[node name="ProtoTail" type="Polygon2D" parent="RigidBody2D"]
+position = Vector2(0, 1.42857)
+scale = Vector2(1, 0.952381)
+color = Color(1, 0.498039, 0.121569, 1)
+polygon = PackedVector2Array(12, -1, 26, -12, 46, -3, 26, 9)
+uv = PackedVector2Array(12, -1, 26, -12, 46, -3, 26, 9)
+bones = ["BasePuck", PackedFloat32Array(0, 0, 0, 0), "BasePuck/Tail", PackedFloat32Array(1, 1, 1, 1)]
+
+[node name="ProtoTailTip" type="Polygon2D" parent="RigidBody2D/ProtoTail"]
+position = Vector2(-1, 0.6)
+rotation = -0.0300591
+scale = Vector2(1, 1.05)
+polygon = PackedVector2Array(38, 2, 32, 0, 37, -3, 30, -7, 36, -8, 48, -2)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="RigidBody2D"]
+position = Vector2(-57.0646, 0)
+scale = Vector2(7.27083, 1)
+polygon = PackedVector2Array(10, 0, 12, -10, 13, 0, 13, 10)

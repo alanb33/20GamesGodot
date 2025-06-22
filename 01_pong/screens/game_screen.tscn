@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://w8ulr1copddh"]
+
+[ext_resource type="Script" uid="uid://dywl6v20a1rqr" path="res://screens/game_screen.gd" id="1_frmbi"]
+[ext_resource type="PackedScene" uid="uid://u003hp46fixg" path="res://scenes/Paddle.tscn" id="1_n72h8"]
+[ext_resource type="Texture2D" uid="uid://bne5n7a55000s" path="res://assets/PongArena.png" id="1_rxj4p"]
+[ext_resource type="PackedScene" uid="uid://p8ubf5p3awve" path="res://scenes/Ball.tscn" id="2_daj5d"]
+[ext_resource type="PackedScene" uid="uid://c0nwfkg2m7f06" path="res://scenes/CountdownLabel.tscn" id="4_30aos"]
+[ext_resource type="PackedScene" uid="uid://crtef5qmi5fpw" path="res://scenes/ScorePoints.tscn" id="6_10oun"]
+
+[node name="GameScreen" type="Node2D"]
+script = ExtResource("1_frmbi")
+
+[node name="BG" type="Sprite2D" parent="."]
+self_modulate = Color(0.93408, 0.93408, 0.93408, 1)
+texture = ExtResource("1_rxj4p")
+centered = false
+
+[node name="PaddleLeft" parent="." instance=ExtResource("1_n72h8")]
+position = Vector2(50, 324)
+player_controlled = true
+
+[node name="PaddleRight" parent="." instance=ExtResource("1_n72h8")]
+position = Vector2(1102, 324)
+
+[node name="Ball" parent="." instance=ExtResource("2_daj5d")]
+position = Vector2(576, 324)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="CountdownLabel" parent="CanvasLayer" instance=ExtResource("4_30aos")]
+
+[node name="ScoreLeft" parent="CanvasLayer" instance=ExtResource("6_10oun")]
+
+[node name="ScoreRight" parent="CanvasLayer" instance=ExtResource("6_10oun")]
+anchors_preset = -1
+anchor_left = 0.97
+anchor_right = 0.97
+offset_left = -43.0
+offset_right = -43.0
