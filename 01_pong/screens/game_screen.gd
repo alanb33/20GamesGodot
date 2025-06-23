@@ -9,6 +9,13 @@ extends Node2D
 @onready var paddle_left: Paddle = $PaddleLeft
 @onready var paddle_right: Paddle = $PaddleRight
 
+@onready var score_left: ScoreLabel = $CanvasLayer/ScoreLeft
+@onready var score_right: ScoreLabel = $CanvasLayer/ScoreRight
+@onready var score_element: Dictionary = {
+	Side.LEFT: score_left,
+	Side.RIGHT: score_right
+}
+
 enum Side {
 	LEFT,
 	RIGHT
@@ -24,7 +31,12 @@ const WINNING_SCORE = 5
 ## Private Functions
 
 func _increase_score(side: GameScreen.Side):
-	scores[side] += 1
+	var scoring_side: GameScreen.Side = Side.LEFT
+	if side == Side.LEFT:
+		scoring_side = Side.RIGHT
+		
+	scores[scoring_side] += 1
+	score_element[scoring_side].set_score(scores[scoring_side])
 	
 func _is_game_over():
 	for side in scores:
