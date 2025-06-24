@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://b4owwpw6t4b0d"]
+[gd_scene load_steps=8 format=3 uid="uid://b4owwpw6t4b0d"]
 
 [ext_resource type="Texture2D" uid="uid://bne5n7a55000s" path="res://assets/PongArena.png" id="1_fu7sn"]
+[ext_resource type="Script" uid="uid://dj4dqs1vtn2a1" path="res://screens/main_menu.gd" id="1_nlkkf"]
 [ext_resource type="Texture2D" uid="uid://df8h3qjonmub6" path="res://assets/MenuBasePanel.png" id="2_jix8l"]
 [ext_resource type="FontFile" uid="uid://84uydkacwjl1" path="res://assets/GROBOLD.ttf" id="3_glbon"]
+[ext_resource type="Script" uid="uid://d2u5litlmhex8" path="res://PlaySlider.gd" id="3_nlkkf"]
 [ext_resource type="Script" uid="uid://dtqylb7i2m33b" path="res://wiggle_button.gd" id="4_jix8l"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlkkf"]
@@ -14,13 +16,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_nlkkf")
 
 [node name="BG" type="TextureRect" parent="."]
-self_modulate = Color(0.4, 0.4, 0.4, 1)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("1_fu7sn")
+
+[node name="FadePanel" type="Panel" parent="BG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MenuPanel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(350, 400)
@@ -54,27 +64,44 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(100, 150)
 theme_override_constants/separation = 50
+alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="Label" type="Label" parent="MenuPanel/VBoxContainer/VBoxContainer"]
+[node name="ValueLabel" type="Label" parent="MenuPanel/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Play to 5"
 horizontal_alignment = 1
 
-[node name="HSlider" type="HSlider" parent="MenuPanel/VBoxContainer/VBoxContainer"]
+[node name="ScoreSlider" type="HSlider" parent="MenuPanel/VBoxContainer/VBoxContainer" node_paths=PackedStringArray("text_label")]
 layout_mode = 2
 min_value = 1.0
+max_value = 10.0
 value = 5.0
+rounded = true
+script = ExtResource("3_nlkkf")
+text_label = NodePath("../ValueLabel")
 
 [node name="PlayButton" type="Button" parent="MenuPanel/VBoxContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.972549, 0.772549, 0.635294, 1)
+theme_override_colors/font_color = Color(0.937255, 0.972549, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.560784, 0.266667, 1)
+theme_override_fonts/font = ExtResource("3_glbon")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nlkkf")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_nlkkf")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_nlkkf")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_nlkkf")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_nlkkf")
 text = "Play!"
+script = ExtResource("4_jix8l")
 
 [node name="ExitButton" type="Button" parent="MenuPanel/VBoxContainer"]
-custom_minimum_size = Vector2(200, 50)
+custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 theme_override_colors/font_hover_color = Color(0.972549, 0.772549, 0.635294, 1)
 theme_override_colors/font_color = Color(0.937255, 0.972549, 1, 1)

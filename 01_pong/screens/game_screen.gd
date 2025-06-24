@@ -26,9 +26,12 @@ var scores = {
 	Side.RIGHT: 0
 }
 
-const WINNING_SCORE = 5
+var _game_over: bool = false
 
 ## Private Functions
+
+func _do_play_again_transition():
+	pass
 
 func _increase_score(side: GameScreen.Side):
 	var scoring_side: GameScreen.Side = Side.LEFT
@@ -40,12 +43,12 @@ func _increase_score(side: GameScreen.Side):
 	
 func _is_game_over():
 	for side in scores:
-		if scores[side] >= WINNING_SCORE:
+		if scores[side] >= GameVars.goal_score:
 			match side:
 				Side.LEFT:
-					print("The home team wins!!")
+					_win_game(Side.LEFT)
 				Side.RIGHT:
-					print("The visitor team wins!!")
+					_win_game(Side.RIGHT)
 			return true
 	return false
 
@@ -54,7 +57,9 @@ func _on_ball_score_event(ball_dir: Vector2):
 		_increase_score(Side.LEFT)
 	else:
 		_increase_score(Side.RIGHT)
+		
 	if not _is_game_over():
+		print("Game is not over")
 		countdown.do_countdown(1)
 		
 	var particles: CPUParticles2D = particle_scene.instantiate()
@@ -69,10 +74,19 @@ func _on_ball_score_event(ball_dir: Vector2):
 	
 	await get_tree().create_timer(1.5).timeout
 	particles.queue_free()
-	
 
 func _on_countdown_finished():
 	ball.serve_ball()
+	
+func _win_game(winner: GameScreen.Side):
+	var winner_string: String = ""
+	match winner:
+		Side.LEFT:
+			winner_string = "Home"
+		Side.RIGHT:
+			winner_string = "Visitor"
+	print("%s Team wins!!" % winner_string)
+	_do_play_again_transition()
 
 ## Godot Functions
 
@@ -80,6 +94,4 @@ func _ready():
 	ball.score_event.connect(_on_ball_score_event)
 	countdown.countdown_finished.connect(_on_countdown_finished)
 	
-func _input(event: InputEvent):
-	if Input.is_action_just_pressed("ui_end"):
-		countdown.do_countdown(3)
+	countdown.do_countdown(3)

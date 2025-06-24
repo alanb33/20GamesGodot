@@ -37,6 +37,7 @@ func _process(delta: float) -> void:
 	if is_hovered():
 		cur_speed = wiggle_speed
 	else:
+		rotation = 0
 		cur_speed = 0.0
 	if cur_speed > 0.0:
 		_wiggle(delta)

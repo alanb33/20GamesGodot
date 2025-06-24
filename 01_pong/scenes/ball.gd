@@ -92,8 +92,6 @@ func _reset_ball():
 	serve_timer.start(RESERVE_TIME)
 	await serve_timer.timeout
 	serve_timer.queue_free()
-	
-	serve_ball()
 
 func _score():
 	score_event.emit(dir)

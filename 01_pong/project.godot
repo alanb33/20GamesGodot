@@ -15,6 +15,10 @@ run/main_scene="uid://w8ulr1copddh"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameVars="*res://game_vars.gd"
+
 [display]
 
 window/size/resizable=false
