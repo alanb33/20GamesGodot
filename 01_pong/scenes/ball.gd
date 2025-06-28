@@ -4,13 +4,21 @@ extends CharacterBody2D
 @onready var body: float = $Pieces/BodyBase.texture.get_size().y
 @onready var half_body: float = body / 2
 
-var dir = Vector2.ZERO
+var preset_dir: Vector2 = Vector2.ZERO
+var dir: Vector2 = Vector2.ZERO
+
+const BALL_ANGLE_BOOST: float = 0.25
+
 const BASE_SPEED: float = 500.0
 var CURRENT_SPEED: float = BASE_SPEED
+var speed_ratio: float:
+	get:
+		return CURRENT_SPEED / BASE_SPEED
 
 const RESERVE_TIME: float = 1.0
 
 signal score_event(ball_dir: Vector2)
+signal bounce(new_ball_dir_x: float)
 
 ## Public Functions
 
@@ -32,17 +40,22 @@ func paddle_bounce(paddle_pos: Vector2, paddle_half: Vector2):
 		if position.y < upper_quarter_start or position.y > lower_quarter_start:
 			if position.y < paddle_pos.y:
 				# We're above the paddle center, so angle upwards
-				dir.y = -abs(dir.y)
+				dir.y = -abs(dir.y) - BALL_ANGLE_BOOST
 			else:
-				dir.y = abs(dir.y)
+				dir.y = abs(dir.y) + BALL_ANGLE_BOOST
 			dir.y *= 1.25
 			
 	CURRENT_SPEED *= 1.1
+	bounce.emit(dir.x)
 
-func serve_ball():
+func preset_direction():
 	var h_dir = _get_h_dir()
 	var angle = _get_angle()
-	dir = Vector2(h_dir, angle).normalized()
+	preset_dir = Vector2(h_dir, angle).normalized()
+
+func serve_ball():
+	dir = preset_dir
+	bounce.emit(dir.x)
 	
 ## Private Functions
 	
@@ -65,6 +78,7 @@ func _check_for_walls():
 	if position.y < min_y or position.y > max_y:
 		position.y = clamp(position.y, min_y, max_y)
 		dir.y = -dir.y
+		bounce.emit(dir.x)
 	
 func _get_h_dir() -> int:
 	var h_dir: int = randi_range(0, 1)
@@ -74,7 +88,6 @@ func _get_h_dir() -> int:
 
 func _get_angle() -> float:
 	var angle: float = cos(randf_range(PI/2, -PI))
-	print("Angle: %f" % angle)
 	return cos(randf_range(PI/2, -PI))
 
 func _move(delta: float) -> void:
@@ -84,6 +97,7 @@ func _move(delta: float) -> void:
 func _reset_ball():
 	var screen_size = get_viewport_rect().size
 	dir = Vector2.ZERO
+	preset_direction()
 	CURRENT_SPEED = BASE_SPEED
 	position = screen_size / 2
 	
@@ -100,3 +114,6 @@ func _score():
 
 func _physics_process(delta: float) -> void:
 	_move(delta)
+	
+func _ready():
+	preset_direction()

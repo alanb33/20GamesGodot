@@ -9,12 +9,18 @@ extends Node2D
 @onready var paddle_left: Paddle = $PaddleLeft
 @onready var paddle_right: Paddle = $PaddleRight
 
+@onready var paddle_left_orig_pos: Vector2 = paddle_left.position
+@onready var paddle_right_orig_pos: Vector2 = paddle_right.position
+
 @onready var score_left: ScoreLabel = $CanvasLayer/ScoreLeft
 @onready var score_right: ScoreLabel = $CanvasLayer/ScoreRight
 @onready var score_element: Dictionary = {
 	Side.LEFT: score_left,
 	Side.RIGHT: score_right
 }
+
+@onready var play_again_screen: PlayAgainScreen = $PlayAgainScreen
+@onready var fireworks_manager: FireworksManager = $FireworksManager
 
 enum Side {
 	LEFT,
@@ -29,9 +35,6 @@ var scores = {
 var _game_over: bool = false
 
 ## Private Functions
-
-func _do_play_again_transition():
-	pass
 
 func _increase_score(side: GameScreen.Side):
 	var scoring_side: GameScreen.Side = Side.LEFT
@@ -72,12 +75,30 @@ func _on_ball_score_event(ball_dir: Vector2):
 	particles.emitting = true
 	particles.one_shot = true
 	
-	await get_tree().create_timer(1.5).timeout
+	await particles.finished
 	particles.queue_free()
 
 func _on_countdown_finished():
 	ball.serve_ball()
 	
+func _on_rematch():
+	_reset_scores()
+	_reset_paddles()
+	countdown.do_countdown(3)
+	fireworks_manager.stop_fireworks()
+	
+func _reset_scores():
+	# Reset scores
+	for score in scores:
+		scores[score] = 0
+	
+	for element in score_element:
+		score_element[element].set_score(scores[element])
+		
+func _reset_paddles():
+	paddle_left.position = paddle_left_orig_pos
+	paddle_right.position = paddle_right_orig_pos
+		
 func _win_game(winner: GameScreen.Side):
 	var winner_string: String = ""
 	match winner:
@@ -85,13 +106,15 @@ func _win_game(winner: GameScreen.Side):
 			winner_string = "Home"
 		Side.RIGHT:
 			winner_string = "Visitor"
-	print("%s Team wins!!" % winner_string)
-	_do_play_again_transition()
+	var full_win_string = "%s Team wins!!" % winner_string
+	play_again_screen.do_transition(full_win_string)
+	fireworks_manager.start_fireworks()
 
 ## Godot Functions
 
 func _ready():
 	ball.score_event.connect(_on_ball_score_event)
 	countdown.countdown_finished.connect(_on_countdown_finished)
+	play_again_screen.do_rematch.connect(_on_rematch)
 	
 	countdown.do_countdown(3)
