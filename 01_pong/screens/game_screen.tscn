@@ -27,7 +27,6 @@ centered = false
 
 [node name="PaddleLeft" parent="." node_paths=PackedStringArray("ball") instance=ExtResource("1_n72h8")]
 position = Vector2(50, 324)
-player_controlled = true
 ball = NodePath("../Ball")
 
 [node name="YouArrow" type="TextureRect" parent="PaddleLeft"]

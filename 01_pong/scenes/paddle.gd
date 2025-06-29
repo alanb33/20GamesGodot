@@ -21,7 +21,8 @@ enum Side {
 var y_movement_required: float = 0.0
 const y_buffer: float = 5.0
 const MAX_ACCURACY_DISTANCE: float = 1000.0
-const SPEED_IMPACT: float = 1.5
+const SPEED_IMPACT: float = 2.0
+const SPEED_IMPACT_CUSHION: float = 1.25
 
 func _handle_paddle_movement(delta: float) -> void:
 	if player_controlled:
@@ -56,38 +57,30 @@ func _handle_player_movement(delta: float) -> void:
 
 func _on_ball_bounce(new_ball_dir: float):
 	if (new_ball_dir > 0 && side == Side.RIGHT) || (new_ball_dir < 0 && side == Side.LEFT):
-		## NOTE: This is totally broken if the AI paddle is on the left side, but not critical to
-		## fix currently.
-		
-		# If it's moving our way...
+		# Calculate accurate ball destination
 		var ball_angle: float = atan2(ball.dir.y, ball.dir.x)
-		
-		# if ball_angle is negative, we're going upwards
-		# if ball_angle is position, we're going downwards
-		
-		# Get distance to the ball for accuracy calculations
 		var dist_to_ball = abs(position.x - ball.position.x)
-		
-		# The relative destination of the ball from its bounce
 		var ball_y_dest_from_origin: float = tan(ball_angle) * dist_to_ball
 		
-		# The absolute destination of the ball
-		var destination_y_absolute: float = ball.position.y + ball_y_dest_from_origin
+		# Reverse the Y calculation so a left-side paddle works
+		if side == Side.LEFT:
+			ball_y_dest_from_origin = -ball_y_dest_from_origin
 		
-		# Calculate the movement required by the paddle
+		var destination_y_absolute: float = ball.position.y + ball_y_dest_from_origin
 		var accurate_movement = destination_y_absolute - position.y
 		
-		# Get the distance-based accuracy range for the margin of error
+		# Calculate margin of error based on distance and speed
 		var accuracy: float = clamp(dist_to_ball / MAX_ACCURACY_DISTANCE, 0.01, 1)
-		var margin_of_error: float = 1 - accuracy
+		var base_margin: float = (1 - accuracy) / 2
+		var speed_factor: float = ball.speed_ratio * SPEED_IMPACT
+		speed_factor = 1.0 if ball.speed_ratio <= SPEED_IMPACT_CUSHION else speed_factor
+		var error_range: float = base_margin * speed_factor
 		
-		# Speed of the ball is also a factor, multiplied by the SPEED_IMPACT to represent how much
-		# of an impact speed has on its positional calculations.
-		var upper_margin: float = 1 + (margin_of_error / 2) * (ball.speed_ratio * SPEED_IMPACT)
-		var lower_margin: float = 1 - (margin_of_error / 2) * (ball.speed_ratio * SPEED_IMPACT)
-		
-		# The final movement prediction for the paddle!
-		y_movement_required = randf_range(accurate_movement * lower_margin, accurate_movement * upper_margin)
+		# Apply randomized error to movement prediction
+		y_movement_required = accurate_movement * randf_range(
+			1 - error_range, 
+			1 + error_range
+		)
 
 func _on_body_entered(other: Node2D):
 	if other is Ball:
