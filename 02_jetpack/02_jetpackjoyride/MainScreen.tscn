@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://0shj208ibmfy"]
+
+[ext_resource type="Script" uid="uid://ca6451wgr6d7p" path="res://Player.gd" id="1_i8u74"]
+[ext_resource type="Texture2D" uid="uid://closxfdf54w5g" path="res://icon.svg" id="2_ih8ls"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_453mu"]
+size = Vector2(1150, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7pmop"]
+size = Vector2(75, 75)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Floor" type="StaticBody2D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+position = Vector2(575, 595)
+shape = SubResource("RectangleShape2D_453mu")
+
+[node name="Polygon2D" type="Polygon2D" parent="Floor"]
+polygon = PackedVector2Array(-14, 673, -4, 545, 1165, 545, 1169, 709)
+
+[node name="Ceiling" type="StaticBody2D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling"]
+position = Vector2(575, 50)
+shape = SubResource("RectangleShape2D_453mu")
+
+[node name="Polygon2D" type="Polygon2D" parent="Ceiling/CollisionShape2D"]
+position = Vector2(-575, -50)
+polygon = PackedVector2Array(-12, -13, 1170, -22, 1170, 101, -18, 103)
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(166, 308)
+collision_layer = 2
+platform_floor_layers = 4294967041
+script = ExtResource("1_i8u74")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_ih8ls")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+shape = SubResource("RectangleShape2D_7pmop")
